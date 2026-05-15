@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Moje mobilní Vibe Coding Hra</title>
+    <title>Click Master Pro</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #1a1a1a; /* Výchozí barva */
+            background-color: #1a1a1a;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            transition: background-color 0.5s ease; /* Plynulá změna barvy pozadí */
+            transition: background-color 0.5s ease;
         }
 
         #ui-lista {
@@ -38,15 +38,18 @@
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 0 15px #ff4757;
-            transition: transform 0.05s;
+            z-index: 2;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: none;
         }
 
-        #terc:active {
-            transform: scale(0.85) translate(-50%, -50%);
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1;
         }
 
         #modal-overlay {
@@ -66,59 +69,20 @@
             background-color: #2a2a2a;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: center;
             max-width: 85%;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .sekce-manual {
-            background: #333;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: left;
-            border-left: 4px solid #2ed573;
-        }
-
-        .sekce-manual h3 {
-            margin-top: 0;
-            color: #2ed573;
-            font-size: 16px;
-        }
-
-        .sekce-manual p {
-            font-size: 14px;
-            line-height: 1.4;
-            margin: 5px 0;
-        }
-
-        .sekce-nastaveni {
-            text-align: left;
-            margin-bottom: 12px;
-            background: #1a1a1a;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .sekce-nastaveni label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #ccc;
-            font-size: 13px;
         }
 
         input[type="text"], select {
             width: 100%;
             padding: 10px;
+            margin: 10px 0;
             font-size: 16px;
-            border: 2px solid #444;
             border-radius: 6px;
-            background-color: #2a2a2a;
+            background-color: #333;
             color: white;
+            border: 1px solid #444;
             box-sizing: border-box;
         }
 
@@ -130,23 +94,15 @@
             font-size: 18px;
             font-weight: bold;
             border-radius: 8px;
-            cursor: pointer;
             width: 100%;
-        }
-
-        #zebricek {
-            margin-top: 15px;
-            text-align: left;
-            background: #1a1a1a;
-            padding: 10px;
-            border-radius: 8px;
+            cursor: pointer;
         }
 
         .zebricek-radek {
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
-            font-size: 13px;
+            border-bottom: 1px solid #333;
         }
     </style>
 </head>
@@ -154,41 +110,28 @@
 
     <div id="modal-overlay">
         <div class="modal-okno">
-            <h2 style="color:#ff4757">🎯 Click Master</h2>
+            <h2 style="color:#ff4757">🎯 Click Master Pro</h2>
+            <p style="font-size: 14px; color: #aaa;">Trefuj terč a sleduj efekty!</p>
             
-            <div class="sekce-manual">
-                <h3>📖 Jak hrát?</h3>
-                <p>1. Zadej své jméno a vyber si obtížnost.</p>
-                <p>2. Po kliknutí na tlačítko Start se objeví terč.</p>
-                <p>3. <strong>Tvůj úkol:</strong> Klikni na terč tolikrát, kolikrát to stihneš v časovém limitu.</p>
-                <p>4. Čím vyšší skóre, tím více se bude měnit barva okolí!</p>
-            </div>
+            <input type="text" id="jmeno-hrace" placeholder="Tvé jméno..." maxlength="12">
+            
+            <select id="volba-obtiznosti">
+                <option value="80">Lehká</option>
+                <option value="60" selected>Střední</option>
+                <option value="40">Těžká</option>
+            </select>
 
-            <div class="sekce-nastaveni">
-                <label for="jmeno-hrace">Tvé jméno:</label>
-                <input type="text" id="jmeno-hrace" placeholder="Hráč..." maxlength="15">
-            </div>
+            <button id="start-tlacitko">START</button>
 
-            <div class="sekce-nastaveni">
-                <label for="volba-obtiznosti">Obtížnost:</label>
-                <select id="volba-obtiznosti">
-                    <option value="90">Lehká (Velký terč)</option>
-                    <option value="65" selected>Střední (Normální)</option>
-                    <option value="40">Těžká (Malý terč)</option>
-                </select>
-            </div>
-
-            <button id="start-tlacitko">SPUSTIT HRU</button>
-
-            <div id="zebricek">
-                <h3 style="margin-top:0; font-size:14px; text-align:center;">🏆 Nejlepší výsledky</h3>
+            <div id="zebricek" style="margin-top:20px; text-align:left;">
+                <h4 style="margin:5px 0; text-align:center;">🏆 Síň slávy</h4>
                 <div id="zebricek-data"></div>
             </div>
         </div>
     </div>
 
     <div id="ui-lista">
-        <div id="profil-hrace"><span id="zobrazene-jmeno">-</span></div>
+        <div id="profil-hrace">👤 <span id="zobrazene-jmeno">-</span></div>
         <div id="cas-box">⏳ <span id="cas">30</span>s</div>
         <div id="skore-box">🎯 <span id="skore">0</span></div>
     </div>
@@ -198,10 +141,10 @@
     <script>
         let skore = 0;
         let cas = 30;
-        let velikostTerce = 65;
+        let velikostTerce = 60;
         let hraBezi = false;
         let casovac;
-        let jmeno = "";
+        let audioCtx = null;
 
         const terc = document.getElementById('terc');
         const skoreElement = document.getElementById('skore');
@@ -210,96 +153,117 @@
         const startTlacitko = document.getElementById('start-tlacitko');
         const zobrazeneJmeno = document.getElementById('zobrazene-jmeno');
 
-        vykresliZebricek();
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function hrajZvuk(frekvence, typ, delka) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = typ;
+            osc.frequency.setValueAtTime(frekvence, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delka);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delka);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + delka);
+        }
+
+        function vytvorCastice(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.backgroundColor = '#ff4757';
+                p.style.width = Math.random() * 8 + 4 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                document.body.appendChild(p);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 4 + 2;
+                let posX = x;
+                let posY = y;
+                let opacity = 1;
+
+                const anim = setInterval(() => {
+                    posX += Math.cos(angle) * velocity;
+                    posY += Math.sin(angle) * velocity;
+                    opacity -= 0.05;
+                    p.style.left = posX + 'px';
+                    p.style.top = posY + 'px';
+                    p.style.opacity = opacity;
+                    if (opacity <= 0) {
+                        clearInterval(anim);
+                        p.remove();
+                    }
+                }, 16);
+            }
+        }
 
         startTlacitko.addEventListener('click', () => {
-            jmeno = document.getElementById('jmeno-hrace').value.trim() || "Anonym";
+            initAudio();
+            const jmeno = document.getElementById('jmeno-hrace').value.trim() || "Hráč";
             velikostTerce = parseInt(document.getElementById('volba-obtiznosti').value);
-            
-            terc.style.width = velikostTerce + 'px';
-            terc.style.height = velikostTerce + 'px';
             zobrazeneJmeno.textContent = jmeno;
             modalOverlay.style.display = 'none';
             terc.style.display = 'block';
+            terc.style.width = velikostTerce + 'px';
+            terc.style.height = velikostTerce + 'px';
             resetujHru();
         });
 
-        function aktualizujPozadi() {
-            // Skóre 0-50 změní odstín pozadí od tmavé do modro-fialové
-            const intenzita = Math.min(skore * 5, 150); 
-            document.body.style.backgroundColor = `rgb(26, ${intenzita / 2}, ${intenzita})`;
+        function presunTerc() {
+            const maxX = window.innerWidth - velikostTerce;
+            const maxY = window.innerHeight - 150;
+            terc.style.left = Math.random() * maxX + 'px';
+            terc.style.top = (Math.random() * maxY + 80) + 'px';
         }
 
-        function presunTerc() {
-            const sirkaOkna = window.innerWidth;
-            const vyskaOkna = window.innerHeight;
-            const maximalniX = sirkaOkna - velikostTerce;
-            const maximalniY = vyskaOkna - (100 + velikostTerce);
-
-            const nahodneX = Math.floor(Math.random() * maximalniX);
-            const nahodneY = Math.floor(Math.random() * maximalniY) + 70;
-
-            terc.style.left = nahodneX + 'px';
-            terc.style.top = nahodneY + 'px';
-            terc.style.transform = 'none';
+        function uder(e) {
+            if (!hraBezi) { hraBezi = true; spustCasovac(); }
+            skore++;
+            skoreElement.textContent = skore;
+            
+            // Efekty
+            const rect = terc.getBoundingClientRect();
+            vytvorCastice(rect.left + velikostTerce/2, rect.top + velikostTerce/2);
+            hrajZvuk(440 + (skore * 10), 'sine', 0.1);
+            
+            // Dynamické pozadí
+            document.body.style.backgroundColor = `hsl(${skore * 5}, 30%, 15%)`;
+            
+            presunTerc();
         }
 
         function spustCasovac() {
             casovac = setInterval(() => {
                 cas--;
                 casElement.textContent = cas;
-                if (cas === 0) {
+                if (cas <= 0) {
                     clearInterval(casovac);
                     hraBezi = false;
-                    alert(`Čas vypršel! Skóre: ${skore}`);
-                    ulozSkore(jmeno, skore);
-                    vykresliZebricek();
-                    terc.style.display = 'none';
+                    hrajZvuk(150, 'sawtooth', 0.5);
+                    alert("Konec! Skóre: " + skore);
                     modalOverlay.style.display = 'flex';
-                    document.body.style.backgroundColor = '#1a1a1a'; // Reset barvy
+                    terc.style.display = 'none';
+                    document.body.style.backgroundColor = '#1a1a1a';
                 }
             }, 1000);
         }
 
         function resetujHru() {
-            skore = 0;
-            cas = 30;
+            skore = 0; cas = 30;
             skoreElement.textContent = skore;
             casElement.textContent = cas;
-            document.body.style.backgroundColor = '#1a1a1a';
             presunTerc();
         }
-
-        const uder = () => {
-            if (!hraBezi) {
-                hraBezi = true;
-                spustCasovac();
-            }
-            skore++;
-            skoreElement.textContent = skore;
-            aktualizujPozadi();
-            presunTerc();
-        };
 
         terc.addEventListener('touchstart', (e) => { e.preventDefault(); uder(); });
         terc.addEventListener('click', uder);
-
-        function ulozSkore(hracJmeno, hracSkore) {
-            let historie = JSON.parse(localStorage.getItem('vibeHraZebricek')) || [];
-            historie.push({ jmeno: hracJmeno, skore: hracSkore });
-            historie.sort((a, b) => b.skore - a.skore);
-            localStorage.setItem('vibeHraZebricek', JSON.stringify(historie.slice(0, 5)));
-        }
-
-        function vykresliZebricek() {
-            const historie = JSON.parse(localStorage.getItem('vibeHraZebricek')) || [];
-            document.getElementById('zebricek-data').innerHTML = historie.map((p, i) => `
-                <div class="zebricek-radek">
-                    <span>${i + 1}. ${p.jmeno}</span>
-                    <strong>${p.skore} b.</strong>
-                </div>
-            `).join('') || '<div style="text-align:center;color:#666;">Zatím prázdno</div>';
-        }
     </script>
 </body>
 </html>
