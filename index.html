@@ -2,20 +2,20 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <!-- UPRAVENO pro mobily: Zakázali jsme uživatelské zoomování při rychlém klikání -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Moje mobilní Vibe Coding Hra</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #1a1a1a;
+            background-color: #1a1a1a; /* Výchozí barva */
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             user-select: none;
-            -webkit-user-select: none; /* Pro Safari na iPhone */
-            touch-action: manipulation; /* Optimalizace pro rychlé dotyky */
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            transition: background-color 0.5s ease; /* Plynulá změna barvy pozadí */
         }
 
         #ui-lista {
@@ -25,24 +25,10 @@
             padding: 10px 20px;
             font-size: 16px;
             font-weight: bold;
-            background-color: #2a2a2a;
+            background-color: rgba(42, 42, 42, 0.9);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .nastaveni-box {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-        }
-
-        #vyber-barvy {
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            background: none;
+            position: relative;
+            z-index: 5;
         }
 
         #terc {
@@ -52,19 +38,17 @@
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 0 15px #ff4757;
-            transition: transform 0.05s, background-color 0.2s;
+            transition: transform 0.05s;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: none;
         }
 
-        /* Na mobilu nechceme hover efekt (nemáme myš), stačí aktivní stisk */
         #terc:active {
             transform: scale(0.85) translate(-50%, -50%);
         }
 
-        /* Úvodní okno přizpůsobené pro mobily */
         #modal-overlay {
             position: fixed;
             top: 0;
@@ -86,12 +70,29 @@
             text-align: center;
             max-width: 85%;
             width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .modal-okno h2 {
+        .sekce-manual {
+            background: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-left: 4px solid #2ed573;
+        }
+
+        .sekce-manual h3 {
             margin-top: 0;
-            color: #ff4757;
-            font-size: 22px;
+            color: #2ed573;
+            font-size: 16px;
+        }
+
+        .sekce-manual p {
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 5px 0;
         }
 
         .sekce-nastaveni {
@@ -110,7 +111,7 @@
             font-size: 13px;
         }
 
-        .modal-okno input[type="text"], .modal-okno select {
+        input[type="text"], select {
             width: 100%;
             padding: 10px;
             font-size: 16px;
@@ -121,17 +122,16 @@
             box-sizing: border-box;
         }
 
-        .modal-okno button#start-tlacitko {
+        button#start-tlacitko {
             background-color: #2ed573;
             color: white;
             border: none;
-            padding: 12px 0;
+            padding: 15px 0;
             font-size: 18px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            margin-top: 5px;
         }
 
         #zebricek {
@@ -140,16 +140,6 @@
             background: #1a1a1a;
             padding: 10px;
             border-radius: 8px;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-
-        #zebricek h3 {
-            margin-top: 0;
-            text-align: center;
-            font-size: 14px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 4px;
         }
 
         .zebricek-radek {
@@ -164,20 +154,19 @@
 
     <div id="modal-overlay">
         <div class="modal-okno">
-            <h2>⚙️ Nastavení hry</h2>
+            <h2 style="color:#ff4757">🎯 Click Master</h2>
             
-            <div class="sekce-nastaveni">
-                <label for="jmeno-hrace">Jméno hráče:</label>
-                <input type="text" id="jmeno-hrace" placeholder="Tvoje jméno..." maxlength="15">
+            <div class="sekce-manual">
+                <h3>📖 Jak hrát?</h3>
+                <p>1. Zadej své jméno a vyber si obtížnost.</p>
+                <p>2. Po kliknutí na tlačítko Start se objeví terč.</p>
+                <p>3. <strong>Tvůj úkol:</strong> Klikni na terč tolikrát, kolikrát to stihneš v časovém limitu.</p>
+                <p>4. Čím vyšší skóre, tím více se bude měnit barva okolí!</p>
             </div>
 
             <div class="sekce-nastaveni">
-                <label for="volba-casu">Délka hry (sekundy):</label>
-                <select id="volba-casu">
-                    <option value="10">10 sekund</option>
-                    <option value="20">20 sekund</option>
-                    <option value="30" selected>30 sekund</option>
-                </select>
+                <label for="jmeno-hrace">Tvé jméno:</label>
+                <input type="text" id="jmeno-hrace" placeholder="Hráč..." maxlength="15">
             </div>
 
             <div class="sekce-nastaveni">
@@ -185,14 +174,14 @@
                 <select id="volba-obtiznosti">
                     <option value="90">Lehká (Velký terč)</option>
                     <option value="65" selected>Střední (Normální)</option>
-                    <option value="45">Těžká (Malý terč)</option>
+                    <option value="40">Těžká (Malý terč)</option>
                 </select>
             </div>
 
-            <button id="start-tlacitko">Odstartovat hru</button>
+            <button id="start-tlacitko">SPUSTIT HRU</button>
 
             <div id="zebricek">
-                <h3>🏆 Síň slávy</h3>
+                <h3 style="margin-top:0; font-size:14px; text-align:center;">🏆 Nejlepší výsledky</h3>
                 <div id="zebricek-data"></div>
             </div>
         </div>
@@ -201,9 +190,6 @@
     <div id="ui-lista">
         <div id="profil-hrace"><span id="zobrazene-jmeno">-</span></div>
         <div id="cas-box">⏳ <span id="cas">30</span>s</div>
-        <div class="nastaveni-box">
-            <input type="color" id="vyber-barvy" value="#ff4757">
-        </div>
         <div id="skore-box">🎯 <span id="skore">0</span></div>
     </div>
 
@@ -212,7 +198,6 @@
     <script>
         let skore = 0;
         let cas = 30;
-        let maximalniCas = 30;
         let velikostTerce = 65;
         let hraBezi = false;
         let casovac;
@@ -221,50 +206,35 @@
         const terc = document.getElementById('terc');
         const skoreElement = document.getElementById('skore');
         const casElement = document.getElementById('cas');
-        const vyberBarvy = document.getElementById('vyber-barvy');
-        
         const modalOverlay = document.getElementById('modal-overlay');
-        const jmenoInput = document.getElementById('jmeno-hrace');
-        const volbaCasu = document.getElementById('volba-casu');
-        const volbaObtiznosti = document.getElementById('volba-obtiznosti');
         const startTlacitko = document.getElementById('start-tlacitko');
         const zobrazeneJmeno = document.getElementById('zobrazene-jmeno');
-        const zebricekData = document.getElementById('zebricek-data');
 
         vykresliZebricek();
 
         startTlacitko.addEventListener('click', () => {
-            jmeno = jmenoInput.value.trim();
-            if (jmeno === "") {
-                alert("Zadej jméno!");
-                return;
-            }
-
-            maximalniCas = parseInt(volbaCasu.value);
-            velikostTerce = parseInt(volbaObtiznosti.value);
-
+            jmeno = document.getElementById('jmeno-hrace').value.trim() || "Anonym";
+            velikostTerce = parseInt(document.getElementById('volba-obtiznosti').value);
+            
             terc.style.width = velikostTerce + 'px';
             terc.style.height = velikostTerce + 'px';
-
             zobrazeneJmeno.textContent = jmeno;
             modalOverlay.style.display = 'none';
             terc.style.display = 'block';
             resetujHru();
         });
 
-        vyberBarvy.addEventListener('input', (udalost) => {
-            const zvolekaBarva = udalost.target.value;
-            terc.style.backgroundColor = zvolekaBarva;
-            terc.style.boxShadow = `0 0 15px ${zvolekaBarva}`;
-        });
+        function aktualizujPozadi() {
+            // Skóre 0-50 změní odstín pozadí od tmavé do modro-fialové
+            const intenzita = Math.min(skore * 5, 150); 
+            document.body.style.backgroundColor = `rgb(26, ${intenzita / 2}, ${intenzita})`;
+        }
 
         function presunTerc() {
             const sirkaOkna = window.innerWidth;
             const vyskaOkna = window.innerHeight;
-
             const maximalniX = sirkaOkna - velikostTerce;
-            // Zvýšená rezerva dole, aby tlačítko neskákalo pod softwarová tlačítka mobilu
-            const maximalniY = vyskaOkna - (160 + velikostTerce);
+            const maximalniY = vyskaOkna - (100 + velikostTerce);
 
             const nahodneX = Math.floor(Math.random() * maximalniX);
             const nahodneY = Math.floor(Math.random() * maximalniY) + 70;
@@ -278,69 +248,57 @@
             casovac = setInterval(() => {
                 cas--;
                 casElement.textContent = cas;
-
                 if (cas === 0) {
                     clearInterval(casovac);
                     hraBezi = false;
-                    alert(`Konec hry, ${jmeno}! Skóre: ${skore}`);
+                    alert(`Čas vypršel! Skóre: ${skore}`);
                     ulozSkore(jmeno, skore);
-                    
                     vykresliZebricek();
                     terc.style.display = 'none';
                     modalOverlay.style.display = 'flex';
+                    document.body.style.backgroundColor = '#1a1a1a'; // Reset barvy
                 }
             }, 1000);
         }
 
         function resetujHru() {
             skore = 0;
-            cas = maximalniCas;
+            cas = 30;
             skoreElement.textContent = skore;
             casElement.textContent = cas;
-            terc.style.left = '50%';
-            terc.style.top = '50%';
-            terc.style.transform = 'translate(-50%, -50%)';
+            document.body.style.backgroundColor = '#1a1a1a';
+            presunTerc();
         }
 
-        // UPRAVENO pro mobily: Reaguje okamžitě na dotyk (touchstart) i kliknutí
         const uder = () => {
             if (!hraBezi) {
                 hraBezi = true;
                 spustCasovac();
             }
-
             skore++;
             skoreElement.textContent = skore;
+            aktualizujPozadi();
             presunTerc();
         };
 
-        terc.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Zabrání zdvojenému kliknutí na mobilu
-            uder();
-        });
+        terc.addEventListener('touchstart', (e) => { e.preventDefault(); uder(); });
         terc.addEventListener('click', uder);
 
         function ulozSkore(hracJmeno, hracSkore) {
             let historie = JSON.parse(localStorage.getItem('vibeHraZebricek')) || [];
             historie.push({ jmeno: hracJmeno, skore: hracSkore });
             historie.sort((a, b) => b.skore - a.skore);
-            historie = historie.slice(0, 5);
-            localStorage.setItem('vibeHraZebricek', JSON.stringify(historie));
+            localStorage.setItem('vibeHraZebricek', JSON.stringify(historie.slice(0, 5)));
         }
 
         function vykresliZebricek() {
             const historie = JSON.parse(localStorage.getItem('vibeHraZebricek')) || [];
-            if (historie.length === 0) {
-                zebricekData.innerHTML = '<div style="text-align:center;color:#666;">Zatím žádné výsledky</div>';
-                return;
-            }
-
-            zebricekData.innerHTML = historie.map((polozka, index) => `
+            document.getElementById('zebricek-data').innerHTML = historie.map((p, i) => `
                 <div class="zebricek-radek">
-                    <span>${index + 1}. ${polozka.jmeno}</span>
-                    <strong>${polozka.skore} b.</strong>
+                    <span>${i + 1}. ${p.jmeno}</span>
+                    <strong>${p.skore} b.</strong>
                 </div>
-            `).join('');
+            `).join('') || '<div style="text-align:center;color:#666;">Zatím prázdno</div>';
         }
     </script>
 </body>
